@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Sea We Breathe — Interactive Underwater Journey</title>
+  <meta name="description" content="An immersive scroll-driven journey diving through ocean depths, exploring marine life and the breath of our planet." />
+  
+  <!-- Google Fonts for cinematic typography matching the reference design -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,700;0,800;0,900;1,700;1,900&family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Ambient Audio Indicator / Visualizer Notification -->
+  <div id="preloader" class="preloader">
+    <div class="preloader-content">
+      <div class="sonar-wave"></div>
+      <div class="preloader-title">THE SEA WE BREATHE</div>
+      <div class="preloader-sub">INITIALIZING OCEAN EXPERIENCE</div>
+      <div class="progress-bar-container">
+        <div id="preloader-bar" class="preloader-bar"></div>
+      </div>
+      <div id="preloader-percent" class="preloader-percent">0%</div>
+      <div class="preloader-hint">Frames cached for smooth 60FPS diving</div>
+    </div>
+  </div>
+
+  <!-- Background WebGL/Canvas Frame Renderer (Fixed Fullscreen) -->
+  <div class="canvas-wrapper">
+    <canvas id="hero-canvas"></canvas>
+    <div class="canvas-vignette"></div>
+    <div class="canvas-color-grade"></div>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="#hero" class="logo-mark">
+        <span class="logo-symbol">◈</span>
+        <span class="logo-text">THE SEA WE BREATHE</span>
+      </a>
+      <span class="expedition-tag">EXPEDITION #04 // DEEP DIVE</span>
+    </div>
+
+    <nav class="header-nav">
+      <a href="#hero" class="nav-item active" data-chapter="0">SURFACE</a>
+      <a href="#chapter-1" class="nav-item" data-chapter="1">SUNLIGHT</a>
+      <a href="#chapter-2" class="nav-item" data-chapter="2">REEF REALM</a>
+      <a href="#chapter-3" class="nav-item" data-chapter="3">TWILIGHT</a>
+      <a href="#chapter-4" class="nav-item" data-chapter="4">ABYSS</a>
+    </nav>
+
+    <div class="header-right">
+      <!-- Ambient Audio Toggle Button -->
+      <button id="sound-btn" class="sound-toggle-btn" aria-label="Toggle ambient underwater sound">
+        <span class="sound-waves">
+          <span class="bar bar-1"></span>
+          <span class="bar bar-2"></span>
+          <span class="bar bar-3"></span>
+          <span class="bar bar-4"></span>
+        </span>
+        <span id="sound-label" class="sound-label">SOUND: OFF</span>
+      </button>
+
+      <button id="info-btn" class="hud-btn info-btn" title="About this experience">
+        <span>INFO</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Interactive Telemetry HUD (Heads-Up Display) -->
+  <aside class="depth-hud">
+    <div class="hud-group">
+      <span class="hud-label">DEPTH</span>
+      <span id="hud-depth" class="hud-value">0 <small>m</small></span>
+    </div>
+    <div class="hud-divider"></div>
+    <div class="hud-group">
+      <span class="hud-label">TEMP</span>
+      <span id="hud-temp" class="hud-value">24.5 <small>°C</small></span>
+    </div>
+    <div class="hud-divider"></div>
+    <div class="hud-group">
+      <span class="hud-label">PRESSURE</span>
+      <span id="hud-pressure" class="hud-value">1.0 <small>ATM</small></span>
+    </div>
+    <div class="hud-divider"></div>
+    <div class="hud-group">
+      <span class="hud-label">FRAME</span>
+      <span id="hud-frame" class="hud-value">001 <small>/ 300</small></span>
+    </div>
+  </aside>
+
+  <!-- Right Side Interactive Timeline Navigator -->
+  <div class="timeline-tracker">
+    <div class="timeline-line">
+      <div id="timeline-fill" class="timeline-fill"></div>
+    </div>
+    <div class="timeline-dots">
+      <button class="t-dot active" data-target="0" title="Surface (0m)"></button>
+      <button class="t-dot" data-target="0.22" title="Sunlight Zone (40m)"></button>
+      <button class="t-dot" data-target="0.45" title="Reef Sanctuary (180m)"></button>
+      <button class="t-dot" data-target="0.70" title="Twilight Abyss (520m)"></button>
+      <button class="t-dot" data-target="0.95" title="Deep Trench (1,250m)"></button>
+    </div>
+  </div>
+
+  <!-- Scroll Runway Container: Defines the scroll journey height -->
+  <div id="scroll-container" class="scroll-container">
+    
+    <!-- HERO SECTION: Exactly matching the uploaded reference image -->
+    <section id="hero" class="scroll-section hero-section">
+      <div class="hero-inner">
+        
+        <!-- Big Centered Title -->
+        <div class="hero-title-box">
+          <h1 class="hero-title">
+            <span class="title-outline">THE SEA WE</span>
+            <span class="title-solid">BREATHE</span>
+          </h1>
+        </div>
+
+        <!-- Subtitle -->
+        <p class="hero-subtitle">
+          WE USE AUDIO TO ENHANCE YOUR EXPERIENCE.
+        </p>
+
+        <!-- Minimalist Corner-Bracketed Button matching the reference -->
+        <div class="hero-action-wrap">
+          <button id="begin-btn" class="corner-bracket-btn" aria-label="Let's begin exploration">
+            <span class="corner corner-tl"></span>
+            <span class="corner corner-tr"></span>
+            <span class="corner corner-bl"></span>
+            <span class="corner corner-br"></span>
+            <span class="btn-text">LET'S BEGIN</span>
+          </button>
+        </div>
+
+        <!-- Scroll Indicator Hint -->
+        <div class="scroll-dive-hint">
+          <span class="dive-arrow">↓</span>
+          <span class="dive-text">SCROLL TO DIVE DEEPER</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CHAPTER 1: THE SUNLIGHT ZONE (15m - 50m) -->
+    <section id="chapter-1" class="scroll-section chapter-section" data-zone="Sunlight Zone">
+      <div class="story-card story-card-left">
+        <div class="chapter-meta">
+          <span class="chapter-num">CHAPTER 01</span>
+          <span class="chapter-depth">DEPTH // 45 METERS</span>
+        </div>
+        <h2 class="story-title">The Planet's Blue Lungs</h2>
+        <p class="story-text">
+          More than half of the oxygen you breathe is generated not by terrestrial forests, 
+          but by microscopic marine phytoplankton drifting in these sunlit surface waters.
+        </p>
+        <div class="stats-grid">
+          <div class="stat-pill">
+            <span class="stat-number">50%+</span>
+            <span class="stat-label">Earth's Oxygen</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-number">30%</span>
+            <span class="stat-label">CO₂ Captured</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 2: THE REEF SANCTUARY & LIVING CURRENTS (80m - 200m) -->
+    <section id="chapter-2" class="scroll-section chapter-section" data-zone="Photic Sanctuary">
+      <div class="story-card story-card-right">
+        <div class="chapter-meta">
+          <span class="chapter-num">CHAPTER 02</span>
+          <span class="chapter-depth">DEPTH // 180 METERS</span>
+        </div>
+        <h2 class="story-title">Cradles of Marine Life</h2>
+        <p class="story-text">
+          As light cascades through the crystalline blue water, complex coral ecosystems 
+          provide refuge and feeding grounds for over a quarter of all marine organisms known to science.
+        </p>
+        <div class="highlight-quote">
+          <span class="quote-bar"></span>
+          <p>"Every drop of ocean water connects all living organisms across continents."</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-pill">
+            <span class="stat-number">25%</span>
+            <span class="stat-label">Marine Species Sheltered</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-number">1 Billion</span>
+            <span class="stat-label">Livelihoods Sustained</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 3: THE TWILIGHT REALM (200m - 700m) -->
+    <section id="chapter-3" class="scroll-section chapter-section" data-zone="Mesopelagic Zone">
+      <div class="story-card story-card-left">
+        <div class="chapter-meta">
+          <span class="chapter-num">CHAPTER 03</span>
+          <span class="chapter-depth">DEPTH // 520 METERS</span>
+        </div>
+        <h2 class="story-title">The Great Twilight Migration</h2>
+        <p class="story-text">
+          In this dim, indigo twilight realm, billions of metric tons of marine creatures 
+          conduct the largest biological migration on Earth each night, locking atmospheric carbon 
+          safely into the abyss.
+        </p>
+        <div class="stats-grid">
+          <div class="stat-pill">
+            <span class="stat-number">10B Tons</span>
+            <span class="stat-label">Biomass In Motion</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-number">90%</span>
+            <span class="stat-label">Global Ocean Heat</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 4: THE DEEP ABYSS & CARBON REPOSITORY (1,000m+) -->
+    <section id="chapter-4" class="scroll-section chapter-section" data-zone="Bathypelagic Trench">
+      <div class="story-card story-card-center">
+        <div class="chapter-meta">
+          <span class="chapter-num">CHAPTER 04</span>
+          <span class="chapter-depth">DEPTH // 1,250 METERS</span>
+        </div>
+        <h2 class="story-title">Protect What Keeps Us Alive</h2>
+        <p class="story-text">
+          Down in the silent, immense depths, the ocean holds the thermal and chemical balance of our planet. 
+          The breath we exhale returns to the sea; the oxygen we inhale begins here.
+        </p>
+        <div class="action-buttons-group">
+          <button id="replay-btn" class="hud-action-btn primary-action">
+            <span class="action-icon">↺</span>
+            <span>SURFACE AGAIN</span>
+          </button>
+          <button id="learn-btn" class="hud-action-btn secondary-action">
+            <span class="action-icon">✦</span>
+            <span>JOIN CONSERVATION</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER / OUTRO -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="brand-title">THE SEA WE BREATHE</div>
+          <div class="brand-sub">AN INTERACTIVE 3D SCROLL EXPERIENCE</div>
+        </div>
+        <div class="footer-links">
+          <span>HIGH-PRECISION 300 FRAME SEQUENCE</span>
+          <span>•</span>
+          <span>PROCEDURAL UNDERWATER AUDIO</span>
+          <span>•</span>
+          <span>FULL 60FPS SMOOTH SCRUB</span>
+        </div>
+        <div class="footer-copy">
+          Designed for ocean awareness & high-fidelity web immersion.
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Modal / Info Dialog -->
+  <div id="info-modal" class="info-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-box">
+      <button id="modal-close" class="modal-close">&times;</button>
+      <div class="modal-header">
+        <span class="modal-tag">ABOUT THE PROJECT</span>
+        <h3>The Sea We Breathe</h3>
+      </div>
+      <div class="modal-body">
+        <p>
+          This immersive experience uses 300 high-definition 3D rendering frames synchronized 
+          to your scroll velocity with smooth linear interpolation (lerp).
+        </p>
+        <p>
+          <strong>Audio Experience:</strong> Features a real-time procedural Web Audio synthesizer 
+          simulating ambient deep-ocean hydrostatic pressure resonance, underwater currents, 
+          and gentle bubbling sounds that evolve as you plunge deeper.
+        </p>
+        <div class="keyboard-shortcuts">
+          <div class="shortcut-item">
+            <kbd>↓ / ↑</kbd>
+            <span>Smooth dive scroll</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>M</kbd>
+            <span>Toggle underwater audio</span>
+          </div>
+          <div class="shortcut-item">
+            <kbd>Home / End</kbd>
+            <span>Jump to surface / abyss</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

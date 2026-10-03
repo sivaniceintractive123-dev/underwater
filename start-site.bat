@@ -1,0 +1,3 @@
+@echo off
+echo Starting "The Sea We Breathe" interactive experience...
+start "" "%~dp0index.html"
